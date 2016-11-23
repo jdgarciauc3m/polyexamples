@@ -1,7 +1,6 @@
 #include "scene.h"
 #include "rectangle.h"
 #include <iostream>
-#include <string>
 
 namespace dsl { // Dummy Shapes Library
 
@@ -10,6 +9,9 @@ void scene::add_shape(const rectangle & r) {
 }
 
 long long scene::area() const noexcept {
+  // tranform_reduce(begin(shapes_), end(shapes_).
+  //   [](auto x) { return x.area(); }
+  //   [](auto x, auto y) { return x+y; });
   int r = 0;
   for (auto && s : shapes_) {
     r += s.area();

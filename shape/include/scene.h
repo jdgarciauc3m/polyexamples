@@ -21,9 +21,7 @@ public:
   friend std::istream & operator>>(std::istream & is, scene & s);
 
 private:
-
   std::vector<rectangle> shapes_;
-
 };
 
 }
