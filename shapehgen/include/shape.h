@@ -9,11 +9,10 @@ namespace dsl { // Dummy Shapes Library
 class shape {
 public:
 
-  template<typename T>
-  shape(T x);
+  shape() : self_{nullptr} {}
 
   template<typename T>
-  static shape make();
+  shape(T x);
 
   shape(const shape &) = delete;
   shape & operator=(const shape &) = delete;
@@ -21,10 +20,10 @@ public:
   shape(shape &&) noexcept = default;
   shape & operator=(shape &&) = default;
 
-  std::string classname() const { return self_->classname(); }
+  std::string tagname() const { return self_->tagname(); }
   int area() const { return self_->area(); }
-  void move(int dx, int dy) { self_->move(dx,dy); }
-  void resize(int k) {self_->resize(k); }
+  void translate(int dx, int dy) { self_->translate(dx,dy); }
+  void enlarge(int k) {self_->enlarge(k); }
 
   friend std::ostream & operator<<(std::ostream & os, const shape & s)
     { s.self_->insert(os); return os; }
@@ -32,16 +31,15 @@ public:
     { s.self_->extract(is); return is; }
 
 private:
-  shape() : self_{nullptr} {}
 
   class shape_base {
   public:
     shape_base() {}
     virtual ~shape_base() = default;
-    virtual std::string classname() const = 0;
+    virtual std::string tagname() const = 0;
     virtual int area() const = 0;
-    virtual void move(int dx, int dy) = 0;
-    virtual void resize(int k) = 0;
+    virtual void translate(int dx, int dy) = 0;
+    virtual void enlarge(int k) = 0;
     virtual void insert(std::ostream & os) const = 0;
     virtual void extract(std::istream & is) = 0;
   };
@@ -52,10 +50,10 @@ private:
     concrete_shape() : impl_{} {}
     concrete_shape(T && x) : impl_{std::move(x)} {}
     virtual ~concrete_shape() = default;
-    std::string classname() const override { return impl_.classname(); }
+    std::string tagname() const override { return impl_.tagname(); }
     int area() const override { return impl_.area(); }
-    void move(int dx, int dy) override { impl_.move(dx,dy); }
-    void resize(int k) override {impl_.resize(k); }
+    void translate(int dx, int dy) override { impl_.translate(dx,dy); }
+    void enlarge(int k) override {impl_.enlarge(k); }
     void insert(std::ostream & os) const override { os << impl_; }
     void extract(std::istream & is) override { is >> impl_; }
   private:
@@ -63,6 +61,8 @@ private:
   };
 
   std::unique_ptr<shape_base> self_;
+
+  template <typename U> friend shape make_shape();
 };
 
 template <typename T>
@@ -70,10 +70,10 @@ shape::shape(T x) :
   self_{std::make_unique<concrete_shape<T>>(std::move(x))}
 {}
 
-template <typename T>
-shape shape::make() {
+template<typename T>
+shape make_shape() {
   shape s;
-  s.self_ = std::make_unique<concrete_shape<T>>();
+  s.self_ = std::make_unique<shape::concrete_shape<T>>();
   return s;
 }
 

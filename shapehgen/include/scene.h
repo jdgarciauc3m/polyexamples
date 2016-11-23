@@ -13,16 +13,14 @@ public:
   int size() const { return shapes_.size(); }
 
   long long area() const;
-  void move_shapes(int dx, int dy);
-  void resize_shapes(int k);
+  void translate(int dx, int dy);
+  void enlarge(int k);
 
   friend std::ostream & operator<<(std::ostream & os, const scene & s);
   friend std::istream & operator>>(std::istream & is, scene & s);
 
 private:
-  using shape_list = std::vector<shape>;
-
-  shape_list shapes_;
+  std::vector<shape> shapes_;
 
 };
 

@@ -50,7 +50,7 @@ int main(int argc, const char ** argv) {
     return -1;
   }
 
-  s.move_shapes(get<2>(arg), get<3>(arg));
+  s.translate(get<2>(arg), get<3>(arg));
 
   ofstream out{get<1>(arg)};
   out << s;

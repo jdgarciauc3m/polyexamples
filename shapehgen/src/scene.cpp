@@ -14,22 +14,22 @@ long long scene::area() const {
   return r;
 }
 
-void scene::move_shapes(int dx, int dy) {
+void scene::translate(int dx, int dy) {
   for (auto && s : shapes_) {
-    s.move(dx,dy);
+    s.translate(dx,dy);
   }
 }
 
-void scene::resize_shapes(int k) {
+void scene::enlarge(int k) {
   for (auto && s : shapes_) {
-    s.resize(k);
+    s.enlarge(k);
   }
 }
 
 std::ostream & operator<<(std::ostream & os, const scene & s) {
   os << "scene\n";
   for (auto && s : s.shapes_) {
-    os << s.classname() << ": ";
+    os << s.tagname() << ": ";
     os << s << std::endl;
   }
   os << "end-scene";
@@ -40,8 +40,8 @@ namespace {
 
 shape make_shape(const std::string & cname) {
   using namespace std;
-  if (cname=="rectangle:") return shape::make<dsl::rectangle>();
-  else if (cname=="circle:") return shape::make<dsl::circle>();
+  if (cname=="rectangle:") return dsl::make_shape<dsl::rectangle>();
+  else if (cname=="circle:") return dsl::make_shape<dsl::circle>();
   throw invalid_argument{"Unexpected shape name: " + cname};
 }
 

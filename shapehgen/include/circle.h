@@ -18,17 +18,16 @@ public:
 
   int area() const;
 
-  void move(int dx, int dy)
+  void translate(int dx, int dy)
     { x_+=dx; y_+=dy; }
 
-  void resize(int k) 
+  void enlarge(int k) 
     { radius_ *= k; }
 
-  std::string classname() const 
+  std::string tagname() const 
     { return "circle"; }
 
   friend std::ostream & operator<<(std::ostream & os, const circle & r);
-
   friend std::istream & operator>>(std::istream & is, circle & r);
 
 private:

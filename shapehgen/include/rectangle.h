@@ -19,17 +19,16 @@ public:
   int area() const 
     { return width_ * height_; }
 
-  void move(int dx, int dy)
+  void translate(int dx, int dy)
     { x_+=dx; y_+=dy; }
 
-  void resize(int k) 
+  void enlarge(int k) 
     { width_ *= k; height_ *= k; }
 
-  std::string classname() const  
+  std::string tagname() const  
     { return "rectangle"; }
 
   friend std::ostream & operator<<(std::ostream & os, const rectangle & r);
-
   friend std::istream & operator>>(std::istream & is, rectangle & r);
 
 private:
