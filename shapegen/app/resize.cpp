@@ -42,7 +42,7 @@ void resize_scene(const std::string & inname, const std::string & outname,
 
   cout << "Reading file " << inname << endl;
 
-  scene s;
+  scene<rectangle> s;
   ifstream in{inname};
   in >> s;
   if (!in) throw std::runtime_error{"Error reading scene file:" + inname};

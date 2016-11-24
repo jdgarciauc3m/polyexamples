@@ -56,7 +56,7 @@ template <typename S>
 std::ostream & operator<<(std::ostream & os, const scene<S> & s) {
   os << "scene\n";
   for (auto && s : s.shapes_) {
-    os << s.classname() << ": ";
+    os << s.tagname() << ": ";
     os << s << std::endl;
   }
   os << "end-scene";

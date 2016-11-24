@@ -31,7 +31,7 @@ void print_area(const std::string & inname) {
   using namespace std;
   using namespace dsl;
 
-  scene s;
+  scene<rectangle> s;
   ifstream in{inname};
   in >> s;
   if (!in) throw runtime_error{"Error reading scene file"};

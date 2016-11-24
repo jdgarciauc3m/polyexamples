@@ -54,7 +54,7 @@ void generate_scene(const std::string & name, int n) {
   cout << "Generating " << n << " elements\n";
 
   random_device rd;
-  scene s;
+  scene<rectangle> s;
   for (int i=0; i<n; i++) {
     auto r = random_rectangle(rd);
     s.add_shape(r);
