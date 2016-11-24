@@ -2,3 +2,4 @@
 ./genscene 10k.data 10000
 ./genscene 100k.data 100000
 ./genscene 1m.data 1000000
+./genscene 10m.data 10000000
