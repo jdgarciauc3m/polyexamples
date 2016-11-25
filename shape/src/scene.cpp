@@ -9,10 +9,10 @@ void scene::add_shape(const rectangle & r) {
 }
 
 long long scene::area() const noexcept {
-  // tranform_reduce(begin(shapes_), end(shapes_).
+  // transform_reduce(begin(shapes_), end(shapes_).
   //   [](auto x) { return x.area(); }
   //   [](auto x, auto y) { return x+y; });
-  int r = 0;
+  long long r = 0;
   for (auto && s : shapes_) {
     r += s.area();
   }
