@@ -24,10 +24,10 @@ public:
   int area() const noexcept
     { return width_ * height_; }
 
-  void move(int dx, int dy) noexcept
+  void translate(int dx, int dy) noexcept
     { x_+=dx; y_+=dy; }
 
-  void resize(int k) noexcept
+  void enlarge(int k) noexcept
     { width_ *= k; height_ *= k; }
 
   friend std::ostream & operator<<(std::ostream & os, const rectangle & r);

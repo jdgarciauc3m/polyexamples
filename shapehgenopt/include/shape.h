@@ -56,8 +56,8 @@ public:
 
   std::string classname() const { return self()->classname(); }
   int area() const noexcept { return self()->area(); }
-  void move(int dx, int dy) noexcept { self()->move(dx,dy); }
-  void resize(int k) noexcept {self()->resize(k); }
+  void translate(int dx, int dy) noexcept { self()->translate(dx,dy); }
+  void enlarge(int k) noexcept {self()->enlarge(k); }
 
   friend std::ostream & operator<<(std::ostream & os, const shape & s)
     { s.self()->insert(os); return os; }
@@ -85,8 +85,8 @@ private:
 
     virtual std::string classname() const = 0;
     virtual int area() const noexcept = 0;
-    virtual void move(int dx, int dy) noexcept = 0;
-    virtual void resize(int k) noexcept = 0;
+    virtual void translate(int dx, int dy) noexcept = 0;
+    virtual void enlarge(int k) noexcept = 0;
     virtual void insert(std::ostream & os) const noexcept = 0;
     virtual void extract(std::istream & is) noexcept = 0;
   };
@@ -104,8 +104,8 @@ private:
 
     std::string classname() const override { return impl_.classname(); }
     int area() const noexcept override { return impl_.area(); }
-    void move(int dx, int dy) noexcept override { impl_.move(dx,dy); }
-    void resize(int k) noexcept override {impl_.resize(k); }
+    void translate(int dx, int dy) noexcept override { impl_.translate(dx,dy); }
+    void translate(int k) noexcept override {impl_.enlarge(k); }
     void insert(std::ostream & os) const noexcept override { os << impl_; }
     void extract(std::istream & is) noexcept override { is >> impl_; }
   private:
@@ -127,8 +127,8 @@ private:
   
     std::string classname() const noexcept override { return impl_->classname(); }
     int area() const noexcept override { return impl_->area(); }
-    void move(int dx, int dy) noexcept override { impl_->move(dx,dy); }
-    void resize(int k) noexcept override {impl_->resize(k); }
+    void translate(int dx, int dy) noexcept override { impl_->translate(dx,dy); }
+    void enlarge(int k) noexcept override {impl_->enlarge(k); }
     void insert(std::ostream & os) const noexcept override { os << *impl_; }
     void extract(std::istream & is) noexcept override { is >> *impl_; }
   private:

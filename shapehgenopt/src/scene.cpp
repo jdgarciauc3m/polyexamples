@@ -14,15 +14,15 @@ long long scene::area() const noexcept {
   return r;
 }
 
-void scene::move_shapes(int dx, int dy) noexcept {
+void scene::translate(int dx, int dy) noexcept {
   for (auto && s : shapes_) {
-    s.move(dx,dy);
+    s.translate(dx,dy);
   }
 }
 
-void scene::resize_shapes(int k) noexcept {
+void scene::enlarge(int k) noexcept {
   for (auto && s : shapes_) {
-    s.resize(k);
+    s.enlarge(k);
   }
 }
 

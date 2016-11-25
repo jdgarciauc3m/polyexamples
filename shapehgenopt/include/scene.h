@@ -13,8 +13,8 @@ public:
   int size() const noexcept { return shapes_.size(); }
 
   long long area() const noexcept ;
-  void move_shapes(int dx, int dy) noexcept ;
-  void resize_shapes(int k) noexcept;
+  void translate(int dx, int dy) noexcept ;
+  void enlarge(int k) noexcept;
 
   friend std::ostream & operator<<(std::ostream & os, const scene & s);
   friend std::istream & operator>>(std::istream & is, scene & s);

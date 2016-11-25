@@ -49,7 +49,7 @@ int main(int argc, const char ** argv) {
     return -1;
   }
 
-  s.resize_shapes(get<2>(arg));
+  s.enlarge(get<2>(arg));
 
   ofstream out{get<1>(arg)};
   out << s;
