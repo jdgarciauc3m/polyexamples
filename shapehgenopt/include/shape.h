@@ -4,6 +4,7 @@
 #include <iosfwd>
 #include <memory>
 #include <cstring>
+#include <iostream>
 
 namespace dsl { // Dummy Shapes Library
 
@@ -15,10 +16,10 @@ private:
   static constexpr bool is_small() { return sizeof(T) <= max_shape_size; }
 
   template <typename T>
-  using is_small_t = typename std::enable_if<is_small<T>()>::type;
+  using small_shape = typename std::enable_if<is_small<T>(), shape>::type;
 
   template <typename T>
-  using is_not_small_t = typename std::enable_if<(!is_small<T>())>::type;
+  using large_shape = typename std::enable_if<(!is_small<T>()), shape>::type;
 
   class shape_base;
 
@@ -28,14 +29,14 @@ public:
 
   template <typename S>
   shape(S && s,
-        is_small_t<S> * = nullptr) noexcept
+        small_shape<S> * = nullptr) noexcept
   {
     new (&buffer_) concrete_shape<S>{std::move(s)};
   }
 
   template <typename S>
   shape(S && s,
-        is_not_small_t<S> * = nullptr) noexcept
+        large_shape<S> * = nullptr) noexcept
   {
     new (&buffer_) dynamic_shape<S>{std::move(s)};
   }
@@ -133,26 +134,29 @@ private:
     std::unique_ptr<S> impl_;
   };
 
-
-
 public:
-  template<typename S>
-  static shape make(is_small_t<S> * = nullptr) noexcept {
-    shape s;
-    shape::concrete_shape<S> & cs = static_cast<shape::concrete_shape<S>&>(*s.self());
-    new (&s.buffer_) shape::concrete_shape<S>{std::move(cs)};
-    return s;
-  }
+  template <typename S>
+  friend small_shape<S> make_shape() noexcept;
 
-  template<typename S>
-  static shape make(is_not_small_t<S> * = nullptr) noexcept {
-    shape s;
-    new (&s.buffer_) shape::dynamic_shape<S>{std::move(s)};
-    return s;
-  }
-
+  template <typename S>
+  friend large_shape<S> make_shape() noexcept;
 };
 
+template <typename S>
+shape::small_shape<S> make_shape() noexcept
+{
+  shape s;
+  shape::concrete_shape<S> & cs = static_cast<shape::concrete_shape<S>&>(*s.self());
+    new (&s.buffer_) shape::concrete_shape<S>{std::move(cs)};
+  return s;
+}
+
+template <typename S>
+shape::large_shape<S> make_shape() noexcept {
+  shape s;
+  new (&s.buffer_) shape::dynamic_shape<S>{std::move(s)};
+  return s;
+}
 
 } // namespace dsl
 

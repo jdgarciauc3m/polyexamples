@@ -40,8 +40,8 @@ namespace {
 
 shape make_shape(const std::string & cname) {
   using namespace std;
-  if (cname=="rectangle:") return dsl::shape::make<dsl::rectangle>();
-  else if (cname=="circle:") return dsl::shape::make<dsl::circle>();
+  if (cname=="rectangle:") return dsl::make_shape<dsl::rectangle>();
+  else if (cname=="circle:") return dsl::make_shape<dsl::circle>();
   throw invalid_argument{"Unexpected shape name: " + cname};
 }
 
