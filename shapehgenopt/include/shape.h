@@ -22,10 +22,10 @@ private:
   template <typename T>
   using large_shape = typename std::enable_if<(!is_small<T>()), shape>::type;
 
+  shape() {}
 
 public:
 
-  shape() { std::memset(&buffer_, 0, sizeof(buffer_)); }
 
   template <typename S>
   shape(S && s,
