@@ -16,6 +16,8 @@ public:
     radius_{r} 
   {}
 
+  circle(circle &&) noexcept =default;
+
   std::string classname() const noexcept
     { return "circle"; }
 

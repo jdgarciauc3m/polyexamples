@@ -10,7 +10,8 @@ namespace dsl { // Dummy Shapes Library
 
 class shape {
 private:
-  constexpr static int max_shape_size = 32;
+  class shape_base;
+  constexpr static int max_shape_size = sizeof(std::unique_ptr<shape_base>);
 
   template <typename T>
   static constexpr bool is_small() { return sizeof(T) <= max_shape_size; }
@@ -21,7 +22,6 @@ private:
   template <typename T>
   using large_shape = typename std::enable_if<(!is_small<T>()), shape>::type;
 
-  class shape_base;
 
 public:
 
@@ -31,14 +31,14 @@ public:
   shape(S && s,
         small_shape<S> * = nullptr) noexcept
   {
-    new (&buffer_) concrete_shape<S>{std::move(s)};
+    new (&buffer_) concrete_shape<S>{std::forward<S>(s)};
   }
 
   template <typename S>
   shape(S && s,
         large_shape<S> * = nullptr) noexcept
   {
-    new (&buffer_) dynamic_shape<S>{std::move(s)};
+    new (&buffer_) dynamic_shape<S>{std::forward<S>(s)};
   }
 
   shape(const shape &) noexcept = delete;
@@ -95,7 +95,7 @@ private:
   class concrete_shape : public shape_base {
   public:
     concrete_shape() noexcept : impl_{} {}
-    concrete_shape(S && x) noexcept : impl_{std::move(x)} {}
+    concrete_shape(S && x) noexcept : impl_{std::forward<S>(x)} {}
     virtual ~concrete_shape() noexcept = default;
 
     virtual shape_base * moving_clone(std::aligned_storage<max_shape_size>::type & buf) noexcept override {
@@ -116,7 +116,8 @@ private:
   class dynamic_shape : public shape_base {
   public:
     dynamic_shape() noexcept : impl_{std::make_unique<S>()} {}
-    dynamic_shape(S && s) noexcept : impl_{std::make_unique<S>(std::move(s))} {}
+    dynamic_shape(S && s) noexcept : impl_{std::make_unique<S>(std::forward<S>(s))} {}
+    dynamic_shape(std::unique_ptr<S> && p) noexcept : impl_{std::forward<std::unique_ptr<S>>(p)} {}
 
     virtual ~dynamic_shape() noexcept = default;
 
@@ -124,12 +125,12 @@ private:
       return new (&buf) dynamic_shape<S>(std::move(impl_));
     }
   
-    std::string classname() const override { return impl_->classname(); }
-    int area() const override { return impl_->area(); }
-    void move(int dx, int dy) override { impl_->move(dx,dy); }
-    void resize(int k) override {impl_->resize(k); }
-    void insert(std::ostream & os) const override { os << *impl_; }
-    void extract(std::istream & is) override { is >> *impl_; }
+    std::string classname() const noexcept override { return impl_->classname(); }
+    int area() const noexcept override { return impl_->area(); }
+    void move(int dx, int dy) noexcept override { impl_->move(dx,dy); }
+    void resize(int k) noexcept override {impl_->resize(k); }
+    void insert(std::ostream & os) const noexcept override { os << *impl_; }
+    void extract(std::istream & is) noexcept override { is >> *impl_; }
   private:
     std::unique_ptr<S> impl_;
   };
@@ -146,15 +147,14 @@ template <typename S>
 shape::small_shape<S> make_shape() noexcept
 {
   shape s;
-  shape::concrete_shape<S> & cs = static_cast<shape::concrete_shape<S>&>(*s.self());
-    new (&s.buffer_) shape::concrete_shape<S>{std::move(cs)};
+  new (&s.buffer_) shape::concrete_shape<S>{};
   return s;
 }
 
 template <typename S>
 shape::large_shape<S> make_shape() noexcept {
   shape s;
-  new (&s.buffer_) shape::dynamic_shape<S>{std::move(s)};
+  new (&s.buffer_) shape::dynamic_shape<S>{};
   return s;
 }
 

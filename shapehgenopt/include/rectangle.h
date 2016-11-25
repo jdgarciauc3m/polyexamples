@@ -16,6 +16,8 @@ public:
     width_{w}, height_{h} 
   {}
 
+  rectangle(rectangle &&) noexcept = default;
+
   std::string classname() const noexcept
     { return "rectangle"; }
 
