@@ -17,13 +17,13 @@ public:
     radius_{r} 
   {}
 
-  std::string tagname() const override
-    { return "circle"; }
-
   int area() const noexcept override;
 
   void enlarge (int k) noexcept override
     { radius_ *= k; }
+
+  std::string tagname() const override
+    { return "circle"; }
 
   friend std::ostream & operator<<(std::ostream & os, const circle & r);
   friend std::istream & operator>>(std::istream & is, circle & r);
