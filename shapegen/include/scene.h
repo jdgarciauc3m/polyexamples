@@ -14,8 +14,8 @@ public:
   int size() const noexcept { return shapes_.size(); }
 
   long long area() const noexcept;
-  void move_shapes(int dx, int dy) noexcept;
-  void resize_shapes(int k) noexcept;
+  void translate(int dx, int dy) noexcept;
+  void enlarge(int k) noexcept;
 
   template <typename T>
   friend std::ostream & operator<<(std::ostream & os, const scene<T> & s);
@@ -39,16 +39,16 @@ long long scene<S>::area() const noexcept {
 }
 
 template <typename S>
-void scene<S>::move_shapes(int dx, int dy) noexcept {
+void scene<S>::translate(int dx, int dy) noexcept {
   for (auto && s : shapes_) {
-    s.move(dx,dy);
+    s.translate(dx,dy);
   }
 }
 
 template <typename S>
-void scene<S>::resize_shapes(int k) noexcept {
+void scene<S>::enlarge(int k) noexcept {
   for (auto && s : shapes_) {
-    s.resize(k);
+    s.enlarge(k);
   }
 }
 

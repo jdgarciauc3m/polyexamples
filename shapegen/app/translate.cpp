@@ -12,21 +12,22 @@
 void print_error(std::string msg, int argc, const char ** argv) {
   using namespace std;
   cerr << msg << endl;
-  cerr << "\t" << argv[0] << " infile outfile k" << endl;
+  cerr << "\t" << argv[0] << " infile outfile dx dy" << endl;
   copy_n(argv, argc, ostream_iterator<std::string>{cout, " "});
 }
 
-std::tuple<std::string, std::string, int>
+std::tuple<std::string, std::string, int, int>
 parse_args(int argc, const char ** argv) {
   using namespace std;
-  if (argc != 4) {
+  if (argc != 5) {
     print_error("Wrong format", argc, argv);
     exit(-1);
   }
   
   try {
-    int k = stoi(argv[3]);
-    return make_tuple(argv[1], argv[2], k);
+    int dx = stoi(argv[3]);
+    int dy = stoi(argv[4]);
+    return make_tuple(argv[1], argv[2], dx, dy);
   }
   catch (...) {
     print_error("Wrong numeric argument",argc,argv);
@@ -34,24 +35,23 @@ parse_args(int argc, const char ** argv) {
   }
 }
 
-void resize_scene(const std::string & inname, const std::string & outname,
-                  int factor)
-{
+void translate_scene(const std::string & inname, const std::string & outname, 
+                int dx, int dy) {
   using namespace std;
   using namespace dsl;
 
-  cout << "Reading file " << inname << endl;
+  cout << "Reading gfile " << inname << endl;
 
   scene<rectangle> s;
   ifstream in{inname};
   in >> s;
-  if (!in) throw std::runtime_error{"Error reading scene file:" + inname};
+  if (!in) throw runtime_error{"Error reading scene file: " + inname};
 
-  s.resize_shapes(factor);
+  s.translate(dx,dy);
 
   ofstream out{outname};
   out << s;
-  if (!out) throw std::runtime_error{"Error writing scene file:" + outname};
+  if (!out) throw runtime_error{"Error writing scene file" + outname};
 
   cout << s.size() << " shapes written to file " << outname << endl;
 }
@@ -61,10 +61,10 @@ int main(int argc, const char ** argv) {
 
   auto arg = parse_args(argc,argv); 
 
-  try {
-    resize_scene(get<0>(arg), get<1>(arg), get<2>(arg));
+  try { 
+    translate_scene(get<0>(arg), get<1>(arg), get<2>(arg), get<3>(arg));
   }
-  catch (exception & e) {
+  catch (const exception & e) {
     cerr << e.what() << endl;
     return -1;
   }

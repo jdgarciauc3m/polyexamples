@@ -21,10 +21,10 @@ public:
 
   int area() const noexcept;
 
-  void move(int dx, int dy) noexcept
+  void trasnlate(int dx, int dy) noexcept
     { x_+=dx; y_+=dy; }
 
-  void resize(int k) noexcept
+  void enlarge(int k) noexcept
     { radius_ *= k; }
 
   friend std::ostream & operator<<(std::ostream & os, const circle & r);
