@@ -21,7 +21,7 @@ private:
     shape_base() noexcept {}
     virtual ~shape_base() noexcept = default;
 
-    virtual shape_base * moving_clone(internal_buffer & buf) noexcept = 0;
+    virtual void moving_clone(internal_buffer & buf) noexcept = 0;
 
     virtual std::string classname() const = 0;
     virtual int area() const noexcept = 0;
@@ -38,8 +38,8 @@ private:
     concrete_shape(S && x) noexcept : impl_{std::forward<S>(x)} {}
     virtual ~concrete_shape() noexcept = default;
 
-    virtual shape_base * moving_clone(internal_buffer & buf) noexcept override {
-      return new (&buf) concrete_shape<S>(std::move(impl_));
+    virtual void moving_clone(internal_buffer & buf) noexcept override {
+      new (&buf) concrete_shape<S>(std::move(impl_));
     }
 
     std::string classname() const override { return impl_.classname(); }
@@ -61,8 +61,8 @@ private:
 
     virtual ~dynamic_shape() noexcept = default;
 
-    virtual shape_base * moving_clone(internal_buffer & buf) noexcept override {
-      return new (&buf) dynamic_shape<S>(std::move(impl_));
+    virtual void moving_clone(internal_buffer & buf) noexcept override {
+      new (&buf) dynamic_shape<S>(std::move(impl_));
     }
   
     std::string classname() const noexcept override { return impl_->classname(); }
