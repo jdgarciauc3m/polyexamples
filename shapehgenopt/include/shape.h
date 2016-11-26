@@ -32,14 +32,14 @@ private:
   };
 
   template <typename S>
-  class concrete_shape : public shape_base {
+  class local_shape : public shape_base {
   public:
-    concrete_shape() noexcept : impl_{} {}
-    concrete_shape(S && x) noexcept : impl_{std::forward<S>(x)} {}
-    virtual ~concrete_shape() noexcept = default;
+    local_shape() noexcept : impl_{} {}
+    local_shape(S && x) noexcept : impl_{std::forward<S>(x)} {}
+    virtual ~local_shape() noexcept = default;
 
     virtual void moving_clone(internal_buffer & buf) noexcept override {
-      new (&buf) concrete_shape<S>(std::move(impl_));
+      new (&buf) local_shape<S>(std::move(impl_));
     }
 
     std::string classname() const override { return impl_.classname(); }
@@ -76,7 +76,7 @@ private:
   };
 
   template <typename T>
-  static constexpr bool is_small() { return sizeof(concrete_shape<T>) <= max_shape_size; }
+  static constexpr bool is_small() { return sizeof(local_shape<T>) <= max_shape_size; }
 
   template <typename T>
   using small_shape = typename std::enable_if<is_small<T>(), shape>::type;
@@ -93,7 +93,7 @@ public:
   shape(S && s,
         small_shape<S> * = nullptr) noexcept
   {
-    new (&buffer_) concrete_shape<S>{std::forward<S>(s)};
+    new (&buffer_) local_shape<S>{std::forward<S>(s)};
   }
 
   template <typename S>
@@ -151,7 +151,7 @@ template <typename S>
 shape::small_shape<S> make_shape() noexcept
 {
   shape s;
-  new (&s.buffer_) shape::concrete_shape<S>{};
+  new (&s.buffer_) shape::local_shape<S>{};
   return s;
 }
 
