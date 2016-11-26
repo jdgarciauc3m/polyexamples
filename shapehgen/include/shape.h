@@ -48,7 +48,7 @@ private:
   class concrete_shape : public shape_base {
   public:
     concrete_shape() : impl_{} {}
-    concrete_shape(T && x) : impl_{std::move(x)} {}
+    concrete_shape(T && x) : impl_{std::forward<T>(x)} {}
     virtual ~concrete_shape() = default;
     std::string tagname() const override { return impl_.tagname(); }
     int area() const override { return impl_.area(); }
@@ -67,7 +67,7 @@ private:
 
 template <typename T>
 shape::shape(T x) :
-  self_{std::make_unique<concrete_shape<T>>(std::move(x))}
+  self_{std::make_unique<concrete_shape<T>>(std::forward<T>(x))}
 {}
 
 template<typename T>

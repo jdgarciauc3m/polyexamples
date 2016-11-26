@@ -9,7 +9,7 @@ namespace dsl { // Dummy Shapes Library
 
 class scene {
 public:
-  void add_shape(shape && s) { shapes_.push_back(std::move(s)); }
+  void add_shape(shape && s) { shapes_.push_back(std::forward<shape>(s)); }
   int size() const { return shapes_.size(); }
 
   long long area() const;
