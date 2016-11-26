@@ -13,12 +13,15 @@ private:
   class shape_base;
   constexpr static int max_shape_size = 32; 
 
+  using internal_buffer = 
+      typename std::aligned_storage<max_shape_size,max_shape_size>::type;
+
   class shape_base {
   public:
     shape_base() noexcept {}
     virtual ~shape_base() noexcept = default;
 
-    virtual shape_base * moving_clone(std::aligned_storage<max_shape_size>::type & buf) noexcept = 0;
+    virtual shape_base * moving_clone(internal_buffer & buf) noexcept = 0;
 
     virtual std::string classname() const = 0;
     virtual int area() const noexcept = 0;
@@ -35,7 +38,7 @@ private:
     concrete_shape(S && x) noexcept : impl_{std::forward<S>(x)} {}
     virtual ~concrete_shape() noexcept = default;
 
-    virtual shape_base * moving_clone(std::aligned_storage<max_shape_size>::type & buf) noexcept override {
+    virtual shape_base * moving_clone(internal_buffer & buf) noexcept override {
       return new (&buf) concrete_shape<S>(std::move(impl_));
     }
 
@@ -58,7 +61,7 @@ private:
 
     virtual ~dynamic_shape() noexcept = default;
 
-    virtual shape_base * moving_clone(std::aligned_storage<max_shape_size>::type & buf) noexcept override {
+    virtual shape_base * moving_clone(internal_buffer & buf) noexcept override {
       return new (&buf) dynamic_shape<S>(std::move(impl_));
     }
   
@@ -125,7 +128,7 @@ public:
 
 private:
 
-  std::aligned_storage<max_shape_size>::type buffer_;
+  internal_buffer buffer_;
 
   shape_base * self() noexcept { 
     return reinterpret_cast<shape_base*>(&buffer_); 
