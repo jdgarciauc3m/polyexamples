@@ -29,7 +29,7 @@ private:
   };
 
   template <typename S>
-  class concrete_shape : public shape_base {
+  class alignas(max_shape_size) concrete_shape : public shape_base {
   public:
     concrete_shape() noexcept : impl_{} {}
     concrete_shape(S && x) noexcept : impl_{std::forward<S>(x)} {}
@@ -50,7 +50,7 @@ private:
   };
   
   template <typename S>
-  class dynamic_shape : public shape_base {
+  class alignas(max_shape_size) dynamic_shape : public shape_base {
   public:
     dynamic_shape() noexcept : impl_{std::make_unique<S>()} {}
     dynamic_shape(S && s) noexcept : impl_{std::make_unique<S>(std::forward<S>(s))} {}
