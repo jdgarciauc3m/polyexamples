@@ -7,7 +7,7 @@
 namespace dsl { // Dummy Shapes Library
 
 long long scene::area() const noexcept {
-  long r = 0;
+  long long r = 0;
   for (auto && s : shapes_) {
     r += s->area();
   }
