@@ -89,17 +89,15 @@ private:
 public:
 
 
-  template <typename S>
-  shape(S && s,
-        small_shape<S> * = nullptr) noexcept
-  {
+  template <typename S,
+           small_shape<S> * = nullptr>
+  shape(S && s) noexcept {
     new (&buffer_) local_shape<S>{std::forward<S>(s)};
   }
 
-  template <typename S>
-  shape(S && s,
-        large_shape<S> * = nullptr) noexcept
-  {
+  template <typename S, 
+            large_shape<S> * = nullptr>
+  shape(S && s) noexcept {
     new (&buffer_) dynamic_shape<S>{std::forward<S>(s)};
   }
 
@@ -137,7 +135,6 @@ private:
   const shape_base * self() const noexcept { 
     return reinterpret_cast<const shape_base*>(&buffer_); 
   }
-
 
 public:
   template <typename S>
