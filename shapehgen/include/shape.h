@@ -45,7 +45,7 @@ private:
   };
 
   template <typename T>
-  class concrete_shape : public shape_base {
+  class concrete_shape final : public shape_base {
   public:
     concrete_shape() : impl_{} {}
     concrete_shape(T && x) : impl_{std::forward<T>(x)} {}
