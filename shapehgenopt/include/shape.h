@@ -70,8 +70,23 @@ private:
     std::unique_ptr<S> impl_;
   };
 
+private:
+  internal_buffer buffer_;
+
+  shape_base * self() noexcept { 
+    return reinterpret_cast<shape_base*>(&buffer_); 
+  }
+
+  const shape_base * self() const noexcept { 
+    return reinterpret_cast<const shape_base*>(&buffer_); 
+  }
+
+  shape() {}
+
   template <typename T>
-  static constexpr bool is_small() { return sizeof(local_shape<T>) <= max_shape_size; }
+  static constexpr bool is_small() { 
+    return sizeof(local_shape<T>) <= max_shape_size; 
+  }
 
   template <typename T>
   using small_shape = typename std::enable_if<is_small<T>(), shape>::type;
@@ -79,10 +94,7 @@ private:
   template <typename T>
   using large_shape = typename std::enable_if<(!is_small<T>()), shape>::type;
 
-  shape() {}
-
 public:
-
 
   template <typename S,
            small_shape<S> * = nullptr>
@@ -95,6 +107,12 @@ public:
   shape(S && s) noexcept {
     new (&buffer_) dynamic_shape<S>{std::forward<S>(s)};
   }
+
+  template <typename S>
+  friend small_shape<S> make_shape() noexcept;
+
+  template <typename S>
+  friend large_shape<S> make_shape() noexcept;
 
   shape(const shape &) noexcept = delete;
   shape & operator=(const shape &) noexcept = delete;
@@ -119,24 +137,6 @@ public:
   friend std::istream & operator>>(std::istream & is, shape & s)
     { s.self()->extract(is); return is; }
 
-private:
-
-  internal_buffer buffer_;
-
-  shape_base * self() noexcept { 
-    return reinterpret_cast<shape_base*>(&buffer_); 
-  }
-
-  const shape_base * self() const noexcept { 
-    return reinterpret_cast<const shape_base*>(&buffer_); 
-  }
-
-public:
-  template <typename S>
-  friend small_shape<S> make_shape() noexcept;
-
-  template <typename S>
-  friend large_shape<S> make_shape() noexcept;
 };
 
 template <typename S>
@@ -150,8 +150,7 @@ void shape::dynamic_shape<S>::moving_clone(internal_buffer & buf) noexcept {
 }
 
 template <typename S>
-shape::small_shape<S> make_shape() noexcept
-{
+shape::small_shape<S> make_shape() noexcept {
   shape s;
   new (&s.buffer_) shape::local_shape<S>{};
   return s;
