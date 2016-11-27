@@ -32,7 +32,7 @@ private:
   };
 
   template <typename S>
-  class local_shape : public shape_base {
+  class local_shape final : public shape_base {
   public:
     local_shape() noexcept : impl_{} {}
     local_shape(S && x) noexcept : impl_{std::forward<S>(x)} {}
@@ -51,7 +51,7 @@ private:
   };
   
   template <typename S>
-  class dynamic_shape : public shape_base {
+  class dynamic_shape final : public shape_base {
   public:
     dynamic_shape() noexcept : impl_{std::make_unique<S>()} {}
     dynamic_shape(S && s) noexcept : impl_{std::make_unique<S>(std::forward<S>(s))} {}
