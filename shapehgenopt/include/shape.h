@@ -56,12 +56,9 @@ private:
     dynamic_shape() noexcept : impl_{std::make_unique<S>()} {}
     dynamic_shape(S && s) noexcept : impl_{std::make_unique<S>(std::forward<S>(s))} {}
     dynamic_shape(std::unique_ptr<S> && p) noexcept : impl_{std::forward<std::unique_ptr<S>>(p)} {}
-
     virtual ~dynamic_shape() noexcept = default;
 
-    virtual void moving_clone(internal_buffer & buf) noexcept override {
-      new (&buf) dynamic_shape<S>(std::move(impl_));
-    }
+    virtual void moving_clone(internal_buffer & buf) noexcept override; 
   
     std::string classname() const noexcept override { return impl_->classname(); }
     int area() const noexcept override { return impl_->area(); }
@@ -142,10 +139,16 @@ public:
   friend large_shape<S> make_shape() noexcept;
 };
 
-    template <typename S>
-    void shape::local_shape<S>::moving_clone(internal_buffer & buf) noexcept {
-      new (&buf) local_shape<S>(std::move(impl_));
-    }
+template <typename S>
+void shape::local_shape<S>::moving_clone(internal_buffer & buf) noexcept {
+  new (&buf) local_shape<S>(std::move(impl_));
+}
+
+template <typename S>
+void shape::dynamic_shape<S>::moving_clone(internal_buffer & buf) noexcept {
+  new (&buf) dynamic_shape<S>(std::move(impl_));
+}
+
 template <typename S>
 shape::small_shape<S> make_shape() noexcept
 {
