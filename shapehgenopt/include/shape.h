@@ -23,7 +23,7 @@ private:
 
     virtual void moving_clone(internal_buffer & buf) noexcept = 0;
 
-    virtual std::string classname() const = 0;
+    virtual std::string tagname() const = 0;
     virtual int area() const noexcept = 0;
     virtual void translate(int dx, int dy) noexcept = 0;
     virtual void enlarge(int k) noexcept = 0;
@@ -40,7 +40,7 @@ private:
 
     virtual void moving_clone(internal_buffer & buf) noexcept override; 
 
-    std::string classname() const override { return impl_.classname(); }
+    std::string tagname() const override { return impl_.tagname(); }
     int area() const noexcept override { return impl_.area(); }
     void translate(int dx, int dy) noexcept override { impl_.translate(dx,dy); }
     void enlarge(int k) noexcept override {impl_.enlarge(k); }
@@ -60,7 +60,7 @@ private:
 
     virtual void moving_clone(internal_buffer & buf) noexcept override; 
   
-    std::string classname() const noexcept override { return impl_->classname(); }
+    std::string tagname() const noexcept override { return impl_->tagname(); }
     int area() const noexcept override { return impl_->area(); }
     void translate(int dx, int dy) noexcept override { impl_->translate(dx,dy); }
     void enlarge(int k) noexcept override {impl_->enlarge(k); }
@@ -109,7 +109,7 @@ public:
     self()->~shape_base();
   }
 
-  std::string classname() const { return self()->classname(); }
+  std::string tagname() const { return self()->tagname(); }
   int area() const noexcept { return self()->area(); }
   void translate(int dx, int dy) noexcept { self()->translate(dx,dy); }
   void enlarge(int k) noexcept {self()->enlarge(k); }

@@ -18,7 +18,7 @@ public:
 
   rectangle(rectangle &&) noexcept = default;
 
-  std::string classname() const noexcept
+  std::string tagname() const noexcept
     { return "rectangle"; }
 
   int area() const noexcept

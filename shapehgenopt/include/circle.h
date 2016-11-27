@@ -18,7 +18,7 @@ public:
 
   circle(circle &&) noexcept =default;
 
-  std::string classname() const noexcept
+  std::string tagname() const noexcept
     { return "circle"; }
 
   int area() const noexcept;

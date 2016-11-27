@@ -29,7 +29,7 @@ void scene::enlarge(int k) noexcept {
 std::ostream & operator<<(std::ostream & os, const scene & s) {
   os << "scene\n";
   for (auto && s : s.shapes_) {
-    os << s.classname() << ": ";
+    os << s.tagname() << ": ";
     os << s << std::endl;
   }
   os << "end-scene";
