@@ -53,8 +53,8 @@ private:
   template <typename S>
   class dynamic_shape final : public shape_base {
   public:
-    dynamic_shape() noexcept : impl_{std::make_unique<S>()} {}
-    dynamic_shape(S && s) noexcept : impl_{std::make_unique<S>(std::forward<S>(s))} {}
+    dynamic_shape() : impl_{std::make_unique<S>()} {}
+    dynamic_shape(S && s) : impl_{std::make_unique<S>(std::forward<S>(s))} {}
     dynamic_shape(std::unique_ptr<S> && p) noexcept : impl_{std::forward<std::unique_ptr<S>>(p)} {}
     virtual ~dynamic_shape() noexcept = default;
 
