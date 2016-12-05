@@ -6,31 +6,33 @@
 #include <cstring>
 #include <iostream>
 
+//IMPORTANTE: Comprobar con un tipo grande.
+
 namespace dsl { // Dummy Shapes Library
 
-static constexpr int small_object_threshold = 32;
+static constexpr int size_threshold = 16;
 
-template <typename T>
-constexpr concept bool small_object() {
-  return sizeof(T) <= small_object_threshold;
+template <typename T, template <typename> class W>
+constexpr concept bool Small() {
+  return sizeof(W<std::remove_reference<T>>) <= size_threshold;
 }
 
-template <typename T>
-constexpr concept bool large_object() {
-  return sizeof(T) > small_object_threshold;
+template <typename T, template <typename> class W>
+constexpr concept bool Large() {
+  return !Small<T,W>();
 }
 
 class shape {
 private:
 
-  using internal_buffer = char[small_object_threshold];
+  using internal_buffer = char[size_threshold];
 
   class shape_base {
   public:
     shape_base() noexcept {}
     virtual ~shape_base() noexcept = default;
 
-    virtual void placement_move(internal_buffer & buf) noexcept = 0;
+    virtual void placement_move(internal_buffer & buf) = 0;
 
     virtual std::string tagname() const = 0;
     virtual int area() const noexcept = 0;
@@ -47,7 +49,7 @@ private:
     local_shape(S && x) noexcept : impl_{std::forward<S>(x)} {}
     virtual ~local_shape() noexcept = default;
 
-    virtual void placement_move(internal_buffer & buf) noexcept override; 
+    virtual void placement_move(internal_buffer & buf) override; 
 
     std::string tagname() const override { return impl_.tagname(); }
     int area() const noexcept override { return impl_.area(); }
@@ -67,7 +69,7 @@ private:
     dynamic_shape(std::unique_ptr<S> && p) noexcept : impl_{std::forward<std::unique_ptr<S>>(p)} {}
     virtual ~dynamic_shape() noexcept = default;
 
-    virtual void placement_move(internal_buffer & buf) noexcept override; 
+    virtual void placement_move(internal_buffer & buf) override; 
   
     std::string tagname() const noexcept override { return impl_->tagname(); }
     int area() const noexcept override { return impl_->area(); }
@@ -94,20 +96,23 @@ private:
 
 public:
 
-  template <small_object S>
+  template <Small<local_shape> S>
   shape(S && s) noexcept {
-    new (&buffer_) local_shape<S>{std::forward<S>(s)};
+    if(Small<S,local_shape>()) new (&buffer_) local_shape<S>{std::forward<S>(s)};
   }
 
-  template <large_object S> 
+  template <Large<local_shape> S> 
   shape(S && s) noexcept {
+    static_assert(sizeof(dynamic_shape<S>) < size_threshold, "Buffer too small");
     new (&buffer_) dynamic_shape<S>{std::forward<S>(s)};
   }
 
-  template <small_object S>
+  template <typename S>
+    requires Small<S,local_shape>()
   friend shape make_shape() noexcept;
 
-  template <large_object S>
+  template <Large<local_shape> S>
+    requires !Small<S,local_shape>()
   friend shape make_shape() noexcept;
 
   shape(const shape &) noexcept = delete;
@@ -136,23 +141,25 @@ public:
 };
 
 template <typename S>
-void shape::local_shape<S>::placement_move(internal_buffer & buf) noexcept {
+void shape::local_shape<S>::placement_move(internal_buffer & buf) {
   new (&buf) local_shape<S>(std::move(impl_));
 }
 
 template <typename S>
-void shape::dynamic_shape<S>::placement_move(internal_buffer & buf) noexcept {
+void shape::dynamic_shape<S>::placement_move(internal_buffer & buf) {
   new (&buf) dynamic_shape<S>(std::move(impl_));
 }
 
-template <small_object S>
+template <typename S>
+  requires Small<S,shape::local_shape>()
 shape make_shape() noexcept {
   shape s;
   new (&s.buffer_) shape::local_shape<S>{};
   return s;
 }
 
-template <large_object S>
+template <typename S>
+  requires !Small<S, shape::local_shape>()
 shape make_shape() noexcept {
   shape s;
   new (&s.buffer_) shape::dynamic_shape<S>{};
