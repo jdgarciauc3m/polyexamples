@@ -11,7 +11,7 @@ namespace dsl { // Dummy Shapes Library
 class shape {
 private:
   class shape_base;
-  constexpr static int max_shape_size = 32; 
+  constexpr static int max_shape_size = 16; 
 
   using internal_buffer = 
       typename std::aligned_storage<max_shape_size,max_shape_size>::type;
