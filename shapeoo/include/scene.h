@@ -11,7 +11,9 @@ class shape;
 
 class scene {
 public:
-  void add_shape(std::shared_ptr<shape> && s) { shapes_.push_back(s); }
+  void add_shape(std::shared_ptr<shape> && s) { 
+    shapes_.push_back(std::forward<std::shared_ptr<shape>>(s)); 
+  }
   int size() const noexcept { return shapes_.size(); }
 
   long long area() const noexcept;
