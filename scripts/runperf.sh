@@ -5,5 +5,5 @@ INFILES="1k 10k 100k 1m 10m"
 for i in $INFILES
 do
   echo "***Evaluating $i***"
-  perf stat -r 10 $COUNTERS1 ./area $i.data 2> $i.stat
+  perf stat -r 30 $COUNTERS1 ./area $i.data 2> $i.stat
 done
