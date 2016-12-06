@@ -8,6 +8,7 @@
 #include <string>
 #include <tuple>
 #include <random>
+#include <chrono>
 
 void print_error(std::string msg, int argc, const char ** argv) {
   using namespace std;
@@ -41,7 +42,14 @@ int main(int argc, const char ** argv) {
     cerr << "Error reading scene file" << endl;
     return -1;
   }
-  cout << s.area() << endl;
+
+  using clk = chrono::high_resolution_clock;
+  auto t1 = clk::now();
+  auto a = s.area();
+  auto t2 = clk::now();
+
+  cout << a << endl;
+  cout << "Time: " << chrono::duration_cast<chrono::microseconds>(t2-t1).count() << endl;
 
   return 0;
 }
