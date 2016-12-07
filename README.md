@@ -8,8 +8,9 @@ The different directories contain:
 * **shape**: A simple solution with an scene as a collection of rectangles.
 * **shapegen**: The scene is templated so that a scene may be a collection of rectangles or a collection of circles, but not both.
 * **shapeoo**: Classical Object Oriented solution. Rectangles and circles are part of a hierarchy (with shape as base class) and a scene is a collection of pointers to shapes.
-* **shapehgen**: Highly inspired by Sean Parent's talk (inheritance is base class of evil). Rectangle and circle are independent classes with no common base. Shape class provides value semantics and a scene contains a collection of shapes.
-* **shapehgenopt**: An evolution of previous one with the addition of small object optimization.
+* **shape-type-erased**: Highly inspired by Sean Parent's talk (inheritance is base class of evil). Rectangle and circle are independent classes with no common base. Shape class provides value semantics and a scene contains a collection of shapes.
+* **shape-small-object**: An evolution of previous one with the addition of small object optimization.
+* **shapehgenopt**: Small object optimization with aligned buffer. Note that vector of shapes is however not aligned.
 
 ## How to compile and run
 
